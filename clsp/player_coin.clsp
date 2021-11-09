@@ -1,0 +1,38 @@
+(mod
+  ;The coin stores the player's bet mojos
+  (
+    ;A BLS public key, doesn't have to be your wallet public key
+    PUBKEY
+    ;Player reward puzzle hash
+    PLAYER_PUZZLE_HASH
+    ;The bet amount from the player. It is required to equal to the DEALER_BET_AMOUNT
+    PLAYER_BET_AMOUNT
+    ;The coin id of the coin created by the dealer
+    dealer_coin_id
+    ;Player guess, can only be HEAD or TAIL
+    player_guess
+    ;Dealer bet + Player bet in mojos
+    total_amount
+    ;Puzzle hash of this coin
+    coin_puzzle_hash
+    ;A boolean indicates if the player wants to withdraw the mojos to the PLAYER_PUZZLE_HASH.
+    cancel
+  )
+
+  (include condition_codes.clib)
+  ;main
+  (
+    if cancel
+    ;Player cancelled the play, return mojos to PLAYER_PUZZLE_HASH
+    (list
+      (list CREATE_COIN PLAYER_PUZZLE_HASH PLAYER_BET_AMOUNT)
+      (list ASSERT_MY_AMOUNT PLAYER_BET_AMOUNT)
+      (list ASSERT_MY_PUZZLEHASH coin_puzzle_hash)
+    )
+    (list
+      (list ASSERT_COIN_ANNOUNCEMENT (sha256 dealer_coin_id PLAYER_PUZZLE_HASH player_guess total_amount))
+      (list AGG_SIG_UNSAFE PUBKEY (sha256 dealer_coin_id PLAYER_PUZZLE_HASH player_guess total_amount))
+      (list ASSERT_MY_PUZZLEHASH coin_puzzle_hash)
+    )
+  )
+)

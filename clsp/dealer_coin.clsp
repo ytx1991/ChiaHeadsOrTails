@@ -1,0 +1,77 @@
+(mod
+  ;This coin is created by the dealer of the game and will be spent by the player
+  ;The creation of the coin means the dealer determined the head or tail
+  ;The spending of the coin means the player made the guess.
+  (
+    ;Reward address for the dealer
+    DEALER_PUZZLE_HASH
+    ;The bet amount of mojo from the dealer
+    DEALER_BET_AMOUNT
+    ;The result of the toss determined by the dealer. It is a sha256 hash of (randomString + HEAD/TAIL). For example, if the dealer want HEAD then the hash = sha256(RANDOM_THINGHEAD).
+    ;Note: The dealer needs to save the randon string used in the hash, it will be they key to retrieve the reward if the dealer won the game.
+    ;Any invalid hash will lead to a lose of the dealer!
+    DEALER_TOSS_HASH
+    ;The seconds for the dealer to reveal the result after the player made a guess. If the dealer doesn't take any action in time, all the mojos go to the player's puzzle hash. 1 week is the maximum.
+    FREEZE_SECONDS
+    ;Mod puzzle hash of the stake coin, without any currying.
+    STAKE_COIN_MOD_HASH
+    ;Reward address for the player
+    player_puzzle_hash
+    ;The the total bet from both sides
+    total_amount
+    ;The guess made by the player. It can only be HEAD or TAIL.
+    ;Any other value will fail the spending
+    player_guess
+    ;Puzzle hash of this coin
+    coin_puzzle_hash
+    ;A boolean indicates if the dealer wants to withdraw the mojos to the DEALER_PUZZLE_HASH.
+    cancel
+  )
+
+  (include "condition_codes.clib")
+  (include "sha256tree.clib")
+  (include "curry_and_treehash.clib")
+
+  ;main
+  (
+    if cancel
+    (list
+      (list CREATE_COIN DEALER_PUZZLE_HASH DEALER_BET_AMOUNT)
+      (list ASSERT_MY_AMOUNT DEALER_BET_AMOUNT)
+      (list ASSERT_MY_PUZZLEHASH coin_puzzle_hash)
+    )
+    (
+      ;Validate amount from both sides
+      if (all (> DEALER_BET_AMOUNT 0) (= (* DEALER_BET_AMOUNT 2) total_amount))
+      (
+          ;Validate player guess
+          if (any (= player_guess "HEAD") (= player_guess "TAIL"))
+          (
+              ;Validate freeze seconds
+              if (all (> FREEZE_SECONDS 0) (> 604800 FREEZE_SECONDS))
+              ;Lock the bet mojos to a new stake coin. No one can change anything in that coin, only dealer can reveal who is the winner.
+              (list
+                (list CREATE_COIN
+                  (puzzle-hash-of-curried-function STAKE_COIN_MOD_HASH
+                    ;Currying constants in reverse order
+                    (sha256tree FREEZE_SECONDS)
+                    (sha256tree player_guess)
+                    (sha256tree DEALER_TOSS_HASH)
+                    (sha256tree total_amount)
+                    (sha256tree player_puzzle_hash)
+                    (sha256tree DEALER_PUZZLE_HASH)
+                  )
+                  total_amount
+                )
+                (list ASSERT_MY_AMOUNT DEALER_BET_AMOUNT)
+                (list ASSERT_MY_PUZZLEHASH coin_puzzle_hash)
+                (list CREATE_COIN_ANNOUNCEMENT (concat player_puzzle_hash player_guess total_amount))
+              )
+              (x "Invalid freeze seconds")
+          )
+          (x "Invalid player guess!")
+      )
+      (x "Invalid bet amount!")
+    )
+  )
+)

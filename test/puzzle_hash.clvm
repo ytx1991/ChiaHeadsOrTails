@@ -1,0 +1,16 @@
+(mod (test)
+  (include "condition_codes.clib")
+  (include "sha256tree.clib")
+  (include "curry_and_treehash.clib")
+  (list (list CREATE_COIN   (puzzle-hash-of-curried-function 0x9c5390107de5d44b5195a125020601cf72de0049c639c744e5eca9a9aed5cdea
+    ;Currying constants in reverse order
+      (sha256tree 1000)
+      (sha256tree "HEAD")
+      (sha256tree 0x34ada65071d15a9d5866a925bcaca7f8a0d7df3c068fbad5562853fa3adcef9a)
+      (sha256tree 200)
+      (sha256tree 0x59545e1cf881294a631dc96772cf64605e6f6943d4214a32e43c32aa02b7ec21)
+      (sha256tree 0x59545e1cf881294a631dc96772cf64605e6f6943d4214a32e43c32aa02b7ec21)
+    ) 200)
+
+  )
+  )

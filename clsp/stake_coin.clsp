@@ -1,0 +1,65 @@
+(mod
+  ;This coin is created by the player and will be spent by the dealer.
+  ;The creation means the player made the guess and the game is finalized.
+  ;The spending means the announcement of the winner and send all mojos to the winner address.
+  ;Note: If the dealer doesn't spend the coin in time (FREEZE_SECONDS), the player will be able to spend the coin and claim the win.
+  (
+    ;Reward address for the dealer
+    DEALER_PUZZLE_HASH
+    ;Reward address for the player
+    PLAYER_PUZZLE_HASH
+    ;The the total bet from both sides
+    TOTAL_AMOUNT
+    ;The result of the toss determined by the dealer. It is a sha256 hash of (randomString + HEAD/TAIL). For example, if the dealer want HEAD then the hash = sha256(RANDOM_THINGHEAD).
+    ;Note: The dealer needs to save the randon string used in the hash, it will be they key to retrieve the reward if the dealer won the game.
+    ;Any invalid hash will lead to a lose of the dealer!
+    DEALER_TOSS_HASH
+    ;The guess made by the player. It can only be HEAD or TAIL.
+    PLAYER_GUESS
+    ;The seconds for the dealer to reveal the result after the player made a guess. If the dealer doesn't take any action in time, all the mojos go to the player's puzzle hash. 1 week is the maximum.
+    FREEZE_SECONDS
+    ;Puzzle hash of this coin
+    coin_puzzle_hash
+    ;The randomString of the DEALER_TOSS_HASH, it will be used to reveal the winner.
+    dealer_revel_key
+    ;A flag indicates if the dealer missed the deadline. Player can use this flag to claim the reward if it is timeout.
+    is_timeout
+  )
+  (include "condition_codes.clib")
+  ; Sending all mojos to the winner's puzzle hash
+  (defun-inline reward_winner (winner_puzzle_hash amount coin_puzzle_hash)
+    (list
+      (list CREATE_COIN winner_puzzle_hash amount)
+      (list ASSERT_MY_AMOUNT amount)
+      (list ASSERT_MY_PUZZLEHASH coin_puzzle_hash)
+    )
+  )
+  ; Sending all mojos to the winner's puzzle hash if FREEZE_SECONDS past.
+  (defun-inline reward_timeout (winner_puzzle_hash amount coin_puzzle_hash FREEZE_SECONDS)
+    (list
+      (list CREATE_COIN winner_puzzle_hash amount)
+      (list ASSERT_MY_AMOUNT amount)
+      (list ASSERT_MY_PUZZLEHASH coin_puzzle_hash)
+      (list ASSERT_SECONDS_RELATIVE FREEZE_SECONDS)
+    )
+  )
+  ;main
+  (
+    if is_timeout
+    ;Try to cash out
+    (reward_timeout PLAYER_PUZZLE_HASH TOTAL_AMOUNT coin_puzzle_hash FREEZE_SECONDS)
+    (
+      ;Reveal the winner
+      if (= (sha256 dealer_revel_key PLAYER_GUESS) DEALER_TOSS_HASH)
+      ;Player won
+      (reward_winner PLAYER_PUZZLE_HASH TOTAL_AMOUNT coin_puzzle_hash)
+      (
+        ;Check if it is because of the dealer provides invalid key
+        if (any (= (sha256 dealer_revel_key "HEAD") DEALER_TOSS_HASH) (= (sha256 dealer_revel_key "TAIL") DEALER_TOSS_HASH))
+        ;Valid key, dealer won
+        (reward_winner DEALER_PUZZLE_HASH TOTAL_AMOUNT coin_puzzle_hash)
+        (x "Invalid reveal key!")
+      )
+    )
+  )
+)

@@ -1,0 +1,6 @@
+[console_scripts]
+cryptfile-convert = keyrings.cryptfile.convert:main
+
+[keyring.backends]
+cryptfile = keyrings.cryptfile.cryptfile
+

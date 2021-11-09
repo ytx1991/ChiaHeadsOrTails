@@ -1,0 +1,3 @@
+[console_scripts]
+cdv = cdv.cmds.cli:main
+
