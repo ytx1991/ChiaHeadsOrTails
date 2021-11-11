@@ -38,7 +38,7 @@ Example:
     0x59545e1cf881294a631dc96772cf64605e6f6943d4214a32e43c32aa02b7ec21|100|0x76c4d49d76722bae088a4bc12bb341be0225e9e307f4bb7104345e8a02efe61b|100|0x6b3b61b729e5d642908be41bd382173762c5ac5496ed98dfac84eba9ec55655c
     NOTE: As the dealer you need to reveal the winner in 100 seconds after the player committed the guess.
 
- 2 Dealer pays the bet to the dealer coin address. You can use the chia UI client to do this. Remember the unit is Mojo not XCH. A new dealer coin will be created after the payment confirmed.
+ 2 Dealer pays the bet to the dealer coin address. You can use the chia UI client to do this. Remember the unit is Mojo not XCH and you need to EXACT amount of Mojos. A new dealer coin will be created after the payment confirmed.
  3 Dealer publishing the game hash to the world. Anyone who know the game hash can join the game.
  4 Player inputs the game hash. It will return a player coin address
 
@@ -48,7 +48,7 @@ Example:
     Now you need to pay your bet 100 mojos to address xch1d4gq0dsgp9tgxqpk04mem7w43lnfuxr6cn4jlaexqtt4qwzn8gmsksharm before the guess.
     You can track the transaction at https://chia.tt/info/address/xch1d4gq0dsgp9tgxqpk04mem7w43lnfuxr6cn4jlaexqtt4qwzn8gmsksharm
 
-5 Player pays the bet to the player coin address. You can use the chia UI client to do this. Remember the unit is Mojo not XCH. A new playercoin will be created after the payment confirmed
+5 Player pays the bet to the player coin address. You can use the chia UI client to do this. Remember the unit is Mojo not XCH and you need to EXACT amount of Mojos. A new playercoin will be created after the payment confirmed
 6 Player makes a guess (HEAD or TAIL) and commit the game. No one can refund after the commit. Mojos from dealer & player coins will send to the stake coin.
 
     F:\Projects\ChiaHeadsOrTails>python game.py commit
@@ -79,9 +79,29 @@ Example:
 
 # Q & A
 
+## What is a Game Hash
+Game Hash is a unique string represents a game. It has fixed format and useful information.
+
+Game Hash format: DEALER_REWARD_ADDRESS|BET_AMOUNT_MOJO|TOSS_HASH|FREEZE_SECONDS|DEALER_COIN_PUZZLE
+
+DEALER_REWARD_ADDRESS: The wallet address of the dealer
+
+BET_AMOUNT_MOJO: The bet for the game in Mojo. Both dealer and player have to pay same amount of Mojo.
+
+TOSS_HASH: A random encrypted string, indicates the coin is HEAD or TAIL. It is hash by a random key owned by the dealer.
+
+FREEZE_SECONDS: The reaction time for the dealer to reveal the winner after the player commit the game. If the dealer cannot reveal the winner in time than the player can withdraw all the Mojo.
+
+DEALER_COIN_PUZZLE: The puzzle hash of the dealer coin for this game.
+
 ## Can I refund my bet?
 Sure, but only before the game set. You can use the "refund" command to do it.
+
+## I paid wrong amount of Mojo, what should I do?
+You must pay the exact amount of Mojo to continue the game. No matter you paid less or more, you should refund you bet first then pay again.
+
 ## I don't have any Mojo, how to play?
 You don't have to pay the bet by youself. As long as you get the coin address, you can ask you friends pay the bet for you.
+
 ## Why this is a fair game?
 Everything is locked by the Chialisp. No one can cheat the blockchain. You  cannot refuse to acknowledge the winner or change the commit guess / fact.

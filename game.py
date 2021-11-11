@@ -160,7 +160,7 @@ def refund_game(game_hash_string, is_dealer):
         spend_bundle['aggregated_signature'] = "0xc00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
         # Push tx
         rpc.push_tx(spend_bundle)
-        print('Your {0} mojo is refunded to {1}.'.format(game_hash.amount, REWARD_PUZZLE_HASH))
+        print('Your {0} mojo is refunded to {1}.'.format(game_hash.amount, hex(REWARD_PUZZLE_HASH)))
     else:
         print('Who are you?')
 
