@@ -45,7 +45,7 @@ def new_game(amount, head_or_trail):
     return
 
 
-@click.command('play', short_help='Play the game hosted by someone. Use the game hash published by the dealer.')
+@click.command('play', short_help='Play the game hosted by one dealer. Use the game hash published by the dealer.')
 @click.option('--game_hash_string', prompt='Input the game hash you want to play',
               help='The game hash published by dealer')
 def play_game(game_hash_string):
@@ -116,10 +116,10 @@ def commit_game(game_hash_string, guess):
     spend_bundle['aggregated_signature'] = coin_driver.sign_transaction(hex(SIGN_PRIVATE_KEY), dealer_coin[0], hex(REWARD_PUZZLE_HASH), guess, amount * 2)
     # Push tx
     rpc.push_tx(spend_bundle)
-    return
+    print('The game is set. Wait the dealer reveal the winner. If the game is timeout you can claim all Mojos by the "timeout" command.')
 
 
-@click.command('refund', short_help='You want to refund your bet.')
+@click.command('refund', short_help='You want to refund your bet before commit the game.')
 @click.option('--game_hash_string', prompt='Input the game hash you want to refund',
               help='The game hash published by dealer')
 @click.option('--is_dealer', prompt='Are you the dealer of the game? (Y or N)',
@@ -165,7 +165,7 @@ def refund_game(game_hash_string, is_dealer):
         print('Who are you?')
 
 
-@click.command('reveal', short_help='Reveal the winner as the dealer. All mojos will go to winner address. Failed to reveal the winner in time will cause dealer lose.')
+@click.command('reveal', short_help='Reveal the winner as the dealer. All mojos will go to the winner address. Failed to reveal the winner in time will cause dealer lose.')
 @click.option('--game_hash_string', prompt='Input the game hash you want to reveal',
               help='The game hash published by dealer')
 def reveal_game(game_hash_string):
@@ -238,14 +238,13 @@ def timeout_game(game_hash_string):
                 spend_bundle['coin_spends'].append(spend_stake)
                 spend_stake['coin'] = stake_coin[1]['coin']
                 spend_stake['puzzle_reveal'] = coin_driver.get_stake_coin_reveal(game_hash, player_reward_puzzle, guess)
-                spend_stake['solution'] = coin_driver.serialize_solution([stake_coin[1]['coin']['puzzle_hash'], '', str(1)])
+                spend_stake['solution'] = coin_driver.serialize_solution([stake_coin[1]['coin']['puzzle_hash'], '0', str(1)])
                 spend_bundle['aggregated_signature'] = "0xc00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
                 # Push tx
                 rpc.push_tx(spend_bundle)
                 print('You win! {0} mojo will send to your address {1}.'.format(int(game_hash.amount) * 2, player_reward_puzzle))
     if count == 0:
         print("No player join the game yet.")
-
 
 
 game.add_command(new_game)
