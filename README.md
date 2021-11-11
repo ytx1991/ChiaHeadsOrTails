@@ -13,13 +13,14 @@ This is a classic guess coin game (Heads or Tails) implemented by the Chialisp. 
     pip install -r requirements.txt
 # Configuration
 Change the config.ini file before the play or I will get all your wins :D
-> [GameSetting]
-;The wallet address you want receive the reward Mojos
-RewardPuzzleHash=0x59545e1cf881294a631dc96772cf64605e6f6943d4214a32e43c32aa02b7ec21
-;A pair of BLS keys, it's not your wallet key. You can create a new Chia wallet and get a pair of keys. The keys must be unique.
-SignPrivateKey=0x2423cdec6398dd75917827344e8f77c968521008578a9b06cddf309e119ee4d1
-SignPublicKey=0xafc5afdd4f567c38138430dbd7e2c5f4a079602739e94625e94540f23bf0f91cb003388ece0044f437515dc7fae3f2d1
-FreezeSeconds=302400
+
+    [GameSetting]
+    ;The wallet address you want receive the reward Mojos
+    RewardPuzzleHash=0x59545e1cf881294a631dc96772cf64605e6f6943d4214a32e43c32aa02b7ec21
+    ;A pair of BLS keys, it's not your wallet key. You can create a new Chia wallet and get a pair of keys. The keys must be unique.
+    SignPrivateKey=0x2423cdec6398dd75917827344e8f77c968521008578a9b06cddf309e119ee4d1
+    SignPublicKey=0xafc5afdd4f567c38138430dbd7e2c5f4a079602739e94625e94540f23bf0f91cb003388ece0044f437515dc7fae3f2d1
+    FreezeSeconds=302400
 
 # How to play
 ![Overview](HoT.png)
