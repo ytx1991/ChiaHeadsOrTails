@@ -76,6 +76,9 @@ def play_game(game_hash_string):
               help='The guess made by the player. It can only be HEAD or TAIL')
 def commit_game(game_hash_string, guess):
     game_hash = GameHash(game_hash_string)
+    if guess != 'HEAD' and guess != 'TAIL':
+        print('A coin can only be "HEAD" or "TAIL"')
+    return
     # Validate game hash
     if not coin_driver.validate_game_hash(game_hash):
         print('Invalid game hash, please ensure you input the full game hash and check with the dealer.')
@@ -200,6 +203,7 @@ def reveal_game(game_hash_string):
                 spend_stake['solution'] = coin_driver.serialize_solution([stake_coin[1]['coin']['puzzle_hash'], reveal_key, str(0)])
                 spend_bundle['aggregated_signature'] = "0xc00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
                 # Push tx
+                print('Spending the stake coin id: {0}, puzzle_hash:{1}'.format(stake_coin[0], stake_coin[1]['coin']['puzzle_hash']))
                 rpc.push_tx(spend_bundle)
                 if '0x{0}'.format(coin_driver.get_toss_hash(reveal_key, guess)) == game_hash.toss_hash:
                     print('You lose! {0} mojo will send to the player address {1}.'.format(int(game_hash.amount) * 2, player_reward_puzzle))
