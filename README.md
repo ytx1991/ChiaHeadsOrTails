@@ -38,9 +38,11 @@ Example:
     0x59545e1cf881294a631dc96772cf64605e6f6943d4214a32e43c32aa02b7ec21|100|0x76c4d49d76722bae088a4bc12bb341be0225e9e307f4bb7104345e8a02efe61b|100|0x6b3b61b729e5d642908be41bd382173762c5ac5496ed98dfac84eba9ec55655c
     NOTE: As the dealer you need to reveal the winner in 100 seconds after the player committed the guess.
 
- 2 Dealer pays the bet to the dealer coin address. You can use the chia UI client to do this. Remember the unit is Mojo not XCH and you need to EXACT amount of Mojos. A new dealer coin will be created after the payment confirmed.
- 3 Dealer publishing the game hash to the world. Anyone who know the game hash can join the game.
- 4 Player inputs the game hash. It will return a player coin address
+2 Dealer pays the bet to the dealer coin address. You can use the chia UI client to do this. Remember the unit is Mojo not XCH and you need to EXACT amount of Mojos. A new dealer coin will be created after the payment confirmed.
+
+3 Dealer publishing the game hash to the world. Anyone who know the game hash can join the game.
+
+4 Player inputs the game hash. It will return a player coin address
 
     F:\Projects\ChiaHeadsOrTails>python game.py play
     Input the game hash you want to play: 0x59545e1cf881294a631dc96772cf64605e6f6943d4214a32e43c32aa02b7ec21|100|0x76c4d49d76722bae088a4bc12bb341be0225e9e307f4bb7104345e8a02efe61b|100|0x6b3b61b729e5d642908be41bd382173762c5ac5496ed98dfac84eba9ec55655c
@@ -49,6 +51,7 @@ Example:
     You can track the transaction at https://chia.tt/info/address/xch1d4gq0dsgp9tgxqpk04mem7w43lnfuxr6cn4jlaexqtt4qwzn8gmsksharm
 
 5 Player pays the bet to the player coin address. You can use the chia UI client to do this. Remember the unit is Mojo not XCH and you need to EXACT amount of Mojos. A new playercoin will be created after the payment confirmed
+
 6 Player makes a guess (HEAD or TAIL) and commit the game. No one can refund after the commit. Mojos from dealer & player coins will send to the stake coin.
 
     F:\Projects\ChiaHeadsOrTails>python game.py commit
