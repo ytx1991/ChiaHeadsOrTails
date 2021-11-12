@@ -70,7 +70,7 @@ Example:
     {'status': 'SUCCESS', 'success': True}
     You win! 200 mojo will send to your address 0x59545e1cf881294a631dc96772cf64605e6f6943d4214a32e43c32aa02b7ec21.
 
-7b Player can claim all Mojos if the dealer doesn't reveal the winner before the time out.
+7b Player can claim all Mojos if the dealer doesn't reveal the winner before the timeout. The dealer can still reveal the winner after the deadline and before the player withdraw.
 
     F:\Projects\ChiaHeadsOrTails>python game.py timeout
     Input the game hash you think it is timeout: 0x59545e1cf881294a631dc96772cf64605e6f6943d4214a32e43c32aa02b7ec21|100|0x76c4d49d76722bae088a4bc12bb341be0225e9e307f4bb7104345e8a02efe61b|100|0x6b3b61b729e5d642908be41bd382173762c5ac5496ed98dfac84eba9ec55655c
