@@ -190,7 +190,8 @@ def reveal_game(game_hash_string):
             player_reward_puzzle = '0x' + hex(solution.first().as_int())[2:].zfill(64)
             guess = str(solution.rest().rest().first().as_python(), 'ascii')
             print('Player {0} guessed the coin is {1}'.format(player_reward_puzzle, guess))
-            stake_coins = rpc.get_coins_by_parent('0x{0}'.format(cid))
+            stake_puzzle_hash = coin_driver.get_stake_coin_puzzle_hash(game_hash, player_reward_puzzle, guess)
+            stake_coins = rpc.get_coins_by_puzzle_hash('0x{0}'.format(stake_puzzle_hash))
             if len(stake_coins) == 0:
                 print('The winner already revealed.')
             else:
@@ -232,7 +233,8 @@ def timeout_game(game_hash_string):
             player_reward_puzzle = '0x' + hex(solution.first().as_int())[2:].zfill(64)
             guess = str(solution.rest().rest().first().as_python(), 'ascii')
             print('Player {0} guessed the coin is {1}'.format(player_reward_puzzle, guess))
-            stake_coins = rpc.get_coins_by_parent('0x{0}'.format(cid))
+            stake_puzzle_hash = coin_driver.get_stake_coin_puzzle_hash(game_hash, player_reward_puzzle, guess)
+            stake_coins = rpc.get_coins_by_parent('0x{0}'.format(stake_puzzle_hash))
             if len(stake_coins) == 0:
                 print('The winner already revealed.')
             else:
