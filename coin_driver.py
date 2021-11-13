@@ -23,11 +23,11 @@ def get_dealer_coin_reveal(game_hash: GameHash):
 
 
 def create_player_coin_puzzle_hash(public_key, reward_puzzle_hash, amount):
-    return PLAYER_MOD.curry(assemble(hex(public_key)), reward_puzzle_hash, amount).get_tree_hash()
+    return PLAYER_MOD.curry(assemble(hex(public_key).zfill(96)), reward_puzzle_hash, amount).get_tree_hash()
 
 
 def get_player_coin_reveal(public_key, reward_puzzle_hash, amount):
-    return str(PLAYER_MOD.curry(assemble(hex(public_key)), reward_puzzle_hash, amount))
+    return str(PLAYER_MOD.curry(assemble(hex(public_key).zfill(96)), reward_puzzle_hash, amount))
 
 
 def get_stake_coin_reveal(game_hash: GameHash, player_puzzle_hash, guess):

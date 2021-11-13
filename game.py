@@ -34,13 +34,13 @@ def new_game(amount, head_or_trail):
     f = open('0x' + str(toss_hash) + '.key', 'w')
     f.write('Coin Puzzle Hash: 0x{0}\n'.format(coin_puzzle_hash))
     f.write('Coin Address: {0}\n'.format(address))
-    f.write('Game Hash: {0}|{1}|0x{2}|{3}|0x{4}\n'.format(hex(REWARD_PUZZLE_HASH), amount, toss_hash, FREEZE_SECONDS, coin_puzzle_hash))
+    f.write('Game Hash: {0}|{1}|0x{2}|{3}|0x{4}\n'.format(hex(REWARD_PUZZLE_HASH).zfill(64), amount, toss_hash, FREEZE_SECONDS, coin_puzzle_hash))
     f.write('Reveal Key: {0}'.format(random_key))
     f.close()
     print('PLEASE SAFELY KEEP THE 0x{0}.key FILE and FILE NAME, OTHERWISE YOU WILL LOSE!'.format(toss_hash))
     print('Now, please transfer your bet {0} mojos to the dealer coin address {1}.'.format(amount, address))
     print('You can track the transaction at https://chia.tt/info/address/{0}'.format(address))
-    print('Send the game hash to your friends to start the game:\n{0}|{1}|0x{2}|{3}|0x{4}'.format(hex(REWARD_PUZZLE_HASH), amount, toss_hash , FREEZE_SECONDS, coin_puzzle_hash))
+    print('Send the game hash to your friends to start the game:\n{0}|{1}|0x{2}|{3}|0x{4}'.format(hex(REWARD_PUZZLE_HASH).zfill(64), amount, toss_hash , FREEZE_SECONDS, coin_puzzle_hash))
     print('NOTE: As the dealer you need to reveal the winner in {0} seconds after the player committed the guess.'.format(FREEZE_SECONDS))
     return
 
@@ -110,13 +110,13 @@ def commit_game(game_hash_string, guess):
     # dealer coin
     spend_dealer['coin'] = dealer_coin[1]['coin']
     spend_dealer['puzzle_reveal'] =coin_driver.get_dealer_coin_reveal(game_hash)
-    spend_dealer['solution'] = coin_driver.serialize_solution([hex(REWARD_PUZZLE_HASH), str(amount * 2), guess, game_hash.dealer_coin_puzzle_hash, str(0)])
+    spend_dealer['solution'] = coin_driver.serialize_solution([hex(REWARD_PUZZLE_HASH).zfill(64), str(amount * 2), guess, game_hash.dealer_coin_puzzle_hash, str(0)])
     # player coin
     spend_player['coin'] = player_coin[1]['coin']
     spend_player['puzzle_reveal'] = coin_driver.get_player_coin_reveal(SIGN_PUBLIC_KEY, REWARD_PUZZLE_HASH, amount)
     spend_player['solution'] = coin_driver.serialize_solution(['0x{0}'.format(dealer_coin[0]), guess, str(amount * 2), '0x{0}'.format(player_coin_puzzle_hash), str(0)])
     # sign
-    spend_bundle['aggregated_signature'] = coin_driver.sign_transaction(hex(SIGN_PRIVATE_KEY), dealer_coin[0], hex(REWARD_PUZZLE_HASH), guess, amount * 2)
+    spend_bundle['aggregated_signature'] = coin_driver.sign_transaction(hex(SIGN_PRIVATE_KEY).zfill(64), dealer_coin[0], hex(REWARD_PUZZLE_HASH).zfill(64), guess, amount * 2)
     # Push tx
     rpc.push_tx(spend_bundle)
     print('The game is set. Wait the dealer reveal the winner. If the game is timeout you can claim all Mojos by the "timeout" command.')
@@ -163,7 +163,7 @@ def refund_game(game_hash_string, is_dealer):
         spend_bundle['aggregated_signature'] = "0xc00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
         # Push tx
         rpc.push_tx(spend_bundle)
-        print('Your {0} mojo is refunded to {1}.'.format(game_hash.amount, hex(REWARD_PUZZLE_HASH)))
+        print('Your {0} mojo is refunded to {1}.'.format(game_hash.amount, hex(REWARD_PUZZLE_HASH).zfill(64)))
     else:
         print('Who are you?')
 
@@ -186,7 +186,7 @@ def reveal_game(game_hash_string):
             count += 1
             # Retrieve solution
             solution = rpc.get_coin_details(cid, coin['spent_block_index']).solution.to_program()
-            player_reward_puzzle = hex(solution.first().as_int())
+            player_reward_puzzle = hex(solution.first().as_int()).zfill(64)
             guess = str(solution.rest().rest().first().as_python(), 'ascii')
             print('Player {0} guessed the coin is {1}'.format(player_reward_puzzle, guess))
             stake_coins = rpc.get_coins_by_parent('0x{0}'.format(cid))
@@ -228,7 +228,7 @@ def timeout_game(game_hash_string):
             count += 1
             # Retrieve solution
             solution = rpc.get_coin_details(cid, coin['spent_block_index']).solution.to_program()
-            player_reward_puzzle = hex(solution.first().as_int())
+            player_reward_puzzle = hex(solution.first().as_int()).zfill(64)
             guess = str(solution.rest().rest().first().as_python(), 'ascii')
             print('Player {0} guessed the coin is {1}'.format(player_reward_puzzle, guess))
             stake_coins = rpc.get_coins_by_parent('0x{0}'.format(cid))
