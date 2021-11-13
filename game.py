@@ -78,7 +78,7 @@ def commit_game(game_hash_string, guess):
     game_hash = GameHash(game_hash_string)
     if guess != 'HEAD' and guess != 'TAIL':
         print('A coin can only be "HEAD" or "TAIL"')
-    return
+        return
     # Validate game hash
     if not coin_driver.validate_game_hash(game_hash):
         print('Invalid game hash, please ensure you input the full game hash and check with the dealer.')
@@ -118,6 +118,7 @@ def commit_game(game_hash_string, guess):
     # sign
     spend_bundle['aggregated_signature'] = coin_driver.sign_transaction(hex(SIGN_PRIVATE_KEY), dealer_coin[0], hex(REWARD_PUZZLE_HASH), guess, amount * 2)
     # Push tx
+
     rpc.push_tx(spend_bundle)
     print('The game is set. Wait the dealer reveal the winner. If the game is timeout you can claim all Mojos by the "timeout" command.')
 
