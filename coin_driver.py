@@ -23,11 +23,11 @@ def get_dealer_coin_reveal(game_hash: GameHash):
 
 
 def create_player_coin_puzzle_hash(public_key, reward_puzzle_hash, amount):
-    return PLAYER_MOD.curry(assemble(hex(public_key).zfill(96)), reward_puzzle_hash, amount).get_tree_hash()
+    return PLAYER_MOD.curry(assemble('0x'+hex(public_key)[2:].zfill(96)), reward_puzzle_hash, amount).get_tree_hash()
 
 
 def get_player_coin_reveal(public_key, reward_puzzle_hash, amount):
-    return str(PLAYER_MOD.curry(assemble(hex(public_key).zfill(96)), reward_puzzle_hash, amount))
+    return str(PLAYER_MOD.curry(assemble('0x'+hex(public_key)[2:].zfill(96)), reward_puzzle_hash, amount))
 
 
 def get_stake_coin_reveal(game_hash: GameHash, player_puzzle_hash, guess):
@@ -52,4 +52,4 @@ def serialize_solution(args):
 
 
 def sign_transaction(private_key, coin_id, player_puzzle_hash, guess, total_amount):
-    return str(AugSchemeMPL.sign(PrivateKey.from_bytes(bytes.fromhex(private_key[2:])), std_hash(bytes.fromhex(coin_id) + bytes.fromhex(player_puzzle_hash[2:]) + bytes(guess, encoding='ascii') + int_to_bytes(total_amount))))
+    return str(AugSchemeMPL.sign(PrivateKey.from_bytes(bytes.fromhex(private_key[2:].zfill(64))), std_hash(bytes.fromhex(coin_id) + bytes.fromhex(player_puzzle_hash[2:].zfill(64)) + bytes(guess, encoding='ascii') + int_to_bytes(total_amount))))
