@@ -40,8 +40,6 @@ pyparsing==2.4.7
 pytest==6.2.5
 pytest-asyncio==0.16.0
 pytimeparse==1.1.8
-pywin32==302
-pywin32-ctypes==0.2.0
 PyYAML==5.4.1
 setproctitle==1.2.2
 six==1.16.0
